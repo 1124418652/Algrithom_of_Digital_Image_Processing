@@ -52,7 +52,7 @@ bool HuMoment(IplImage *img)
 			}
 		}
 
-		x0 = (int)(m10 / m00 + 0.5);
+		x0 = (int)(m10 / m00 + 0.5);            // rounding
 		y0 = (int)(m01 / m00 + 0.5);
 
 		for (int i = 0; i < height; i++)
@@ -64,11 +64,31 @@ bool HuMoment(IplImage *img)
 				u02 += pow(j - y0, 2) * fxy;
 			}
 		}
+
+		cout << "m00:" << m00 << endl;
+		cout << "m10:" << m10 << endl;
+		cout << "m01:" << m01 << endl;
+		cout << "m20:" << m20 << endl;
+		cout << "m02:" << m02 << endl;
+		cout << "m22:" << m22 << endl;
+		cout << "endl";
+		cout << "u20:" << endl;
+		cout << "u02" << endl;
+		return true;
+	}
+
+	else
+	{
+		cout << "Use gray image!" << endl;
+		return false;
 	}
 }
 
 int main()
 {
+	string path = "src/211.jpg";
+	IplImage *img = cvLoadImage(path.c_str(), 0);
+	HuMoment(img);
 	system("pause");
     return 0;
 }
