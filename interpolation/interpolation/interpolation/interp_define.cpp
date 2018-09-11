@@ -115,3 +115,52 @@ bool resize_img(const Mat &res, Mat &dest, int height, int width, int type)
 		return true;
 	}
 }
+
+bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, int gain, int type)
+{
+	/*
+	dest.x = gain * cos(angle) * res.x - gain * sin(angle) * res.y
+	dest.y = gain * sin(angle) * res.x + gain * cos(angle) * res.y
+	res.y = (cos(angle) * dest.y + sin(angle) * dest.x) / gain
+	res.x = (dest.x / gain + sin(angle) * res.y) / cos(angle) 
+	*/
+
+	if (res.empty())
+	{
+		cout << "The resource image is empty!" << endl;
+		return false;
+	}
+
+	int res_x = 0, res_y = 0;
+	int channel = res.channels();
+	int res_height = res.rows;
+	int res_width = res.cols;
+	int dest_height = 0, dest_width = 0;
+	double min_x = 0, max_x = 0, min_y = 0, max_y = 0;
+	double _height = 0, _width = 0;
+
+	if (NEAREST == type)
+	{
+		for (int i = 0; i < res_height; i++)
+		{
+			for (int j = 0; j < res_width; j++)
+			{
+				_width = gain * (cos(angle) * j - sin(angle) * i);
+				_height = gain * (sin(angle) * j + cos(angle) * i);
+
+				if (_width > max_x)
+					max_x = _width;
+				if (_width < min_x)
+					min_x = _width;
+				if (_height > max_y)
+					max_y = _height;
+				if (_height < min_y)
+					min_y = _height;
+			}
+		}
+		dest_height = (int)(max_y - min_y + 0.5) + gain;
+		dest_width = (int)(max_x - min_x + 0.5) + gain;
+	}
+	cout << dest_height << " x " << dest_width << endl;
+	return true;
+}
