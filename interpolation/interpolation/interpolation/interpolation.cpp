@@ -12,9 +12,9 @@ int main()
 	string path = "src/211.jpg";
 	Mat img = imread(path);
 	Mat img2;
-	cvtColor(img, img, CV_BGR2GRAY);
+	///cvtColor(img, img, CV_BGR2GRAY);
     
-	if (resize_img(img, img2, 100, 100, BILINEAR))
+	if (resize_img(img, img2, 600, 600, BILINEAR))
 	{
 		namedWindow("img");
 		namedWindow("img2");
