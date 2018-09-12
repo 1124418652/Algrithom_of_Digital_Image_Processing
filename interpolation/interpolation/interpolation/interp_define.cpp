@@ -119,10 +119,16 @@ bool resize_img(const Mat &res, Mat &dest, int height, int width, int type)
 bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, int gain, int type)
 {
 	/*
-	dest.x = gain * cos(angle) * res.x - gain * sin(angle) * res.y
-	dest.y = gain * sin(angle) * res.x + gain * cos(angle) * res.y
-	res.y = (cos(angle) * dest.y + sin(angle) * dest.x) / gain
-	res.x = (dest.x / gain + sin(angle) * res.y) / cos(angle) 
+	dest_x = [res_x * cos(angle) + res_y * sin(angle)] * gain
+	dest_y = [res_y * cos(angle) - res_x * sin(angle)] * gain
+	res_x = [dest_x * cos(angle) - dest_y * sin(angle)] / gain
+	res_y = [dest_x * sin(angle) + dest_y * cos(angle)] / gain
+
+	rotation step:
+	1) Convert the coordinate system of original image to mathmatical coordinate system.
+	2) Rotate the image and calculate the coordinate pointers.
+	3) Convert the coordinate system of rotated image to image coordinate
+
 	*/
 
 	if (res.empty())
@@ -136,6 +142,7 @@ bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, int gain
 	int res_height = res.rows;
 	int res_width = res.cols;
 	int dest_height = 0, dest_width = 0;
+	int res_x = 0, res_y = 0;
 	double min_x = 0, max_x = 0, min_y = 0, max_y = 0;
 	double _height = 0, _width = 0;
 
@@ -158,8 +165,17 @@ bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, int gain
 					min_y = _height;
 			}
 		}
-		dest_height = (int)(max_y - min_y + 0.5) + gain;
+
+		dest_height = (int)(max_y - min_y + 0.5) + gain;          // Inorder to contain all pointers in resource image
 		dest_width = (int)(max_x - min_x + 0.5) + gain;
+		
+		for (int i = 0; i < dest_height; i++)
+		{
+			for (int j = 0; j < dest_width; j++)
+			{
+				
+			}
+		}
 	}
 	cout << dest_height << " x " << dest_width << endl;
 	return true;
