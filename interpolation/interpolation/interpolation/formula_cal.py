@@ -2,16 +2,16 @@ import time
 import numpy as np 
 from sympy import *
 
-def cal_rotate_formula():
+def inverse_rotate_formula():
 	# (res_x * cos(angle) + res_y * sin(angle)) * gain - dest_x
 	# (res_y * cos(angle) - res_x * sin(angle)) * gain - dest_y
 
 	start = time.time()
 	res_x, res_y, dest_x, dest_y, gain, angle = symbols("res_x, res_y, dest_x, dest_y, gain, angle")
-	rest = solve([(res_x * cos(angle) + res_y * sin(angle)) * gain - dest_x, (res_y * cos(angle) - res_x * sin(angle)) * gain - dest_y], \
+	res = solve([(res_x * cos(angle) + res_y * sin(angle)) * gain - dest_x, (res_y * cos(angle) - res_x * sin(angle)) * gain - dest_y], \
 			[res_x, res_y])
 	print("the formula of rotation in 2D:")
-	print("dest_x: %s\ndest_y: %s" %(rest[res_x], rest[res_y]))
+	print("res_x: %s\nres_y: %s" %(res[res_x], res[res_y]))
 	end = time.time()
 	print("Time used: %s\n" %(end - start))
 
@@ -72,7 +72,7 @@ def inverse_img_rotate():
 	print("Time used: %s\n" %(end - start))
 
 def main():
-	cal_rotate_formula()
+	inverse_rotate_formula()
 	cal_img_rotate()
 	inverse_img_rotate()
 
