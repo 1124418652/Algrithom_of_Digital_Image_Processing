@@ -23,7 +23,10 @@ int main()
 		waitKey(0);
 	}
 */
+	
 	rotate_img(img, img2, PI, 1, 4);
+
+	
 	cout << img.size << endl;
 	system("pause");
 	return 0;

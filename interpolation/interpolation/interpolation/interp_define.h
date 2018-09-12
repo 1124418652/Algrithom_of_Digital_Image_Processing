@@ -7,6 +7,7 @@
 *****************************************************************/
 #include <iostream>
 #include <math.h>
+#include <time.h>
 #include "opencv2/opencv.hpp"
 
 #define NEAREST 0
