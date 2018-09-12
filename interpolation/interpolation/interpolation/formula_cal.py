@@ -8,10 +8,10 @@ def cal_rotate_formula():
 
 	start = time.time()
 	res_x, res_y, dest_x, dest_y, gain, angle = symbols("res_x, res_y, dest_x, dest_y, gain, angle")
-
+	rest = solve([(res_x * cos(angle) + res_y * sin(angle)) * gain - dest_x, (res_y * cos(angle) - res_x * sin(angle)) * gain - dest_y], \
+			[res_x, res_y])
 	print("the formula of rotation in 2D:")
-	pprint(solve([(res_x * cos(angle) + res_y * sin(angle)) * gain - dest_x, (res_y * cos(angle) - res_x * sin(angle)) * gain - dest_y], \
-			[res_x, res_y]))
+	print("dest_x: %s\ndest_y: %s" %(rest[res_x], rest[res_y]))
 	end = time.time()
 	print("Time used: %s\n" %(end - start))
 
