@@ -48,8 +48,8 @@ def cal_img_rotate():
 						[0, -1, 0],
 						[-0.5 * res_width, 0.5 * res_height, 1]])
 
-	rotate_mat = np.mat([[cos(angle), -sin(angle), 0],
-						[sin(angle), cos(angle), 0],
+	rotate_mat = np.mat([[cos(angle) * gain, -sin(angle) * gain, 0],
+						[sin(angle) * gain, cos(angle) * gain, 0],
 						[0, 0, 1]])
 	
 	math2img = np.mat([[1, 0, 0],
@@ -78,8 +78,8 @@ def inverse_img_rotate():
 						[0, -1, 0],
 						[-0.5 * dest_width, 0.5 * dest_height, 1]])
 
-	inverse_rotate_mat = np.mat([[cos(angle), sin(angle), 0],
-						[-sin(angle), cos(angle), 0],
+	inverse_rotate_mat = np.mat([[cos(angle) / gain, sin(angle) / gain, 0],
+						[-sin(angle) / gain, cos(angle) / gain, 0],
 						[0, 0, 1]])
 	
 	math2img = np.mat([[1, 0, 0],
