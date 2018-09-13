@@ -9,6 +9,8 @@ using namespace std;
 
 int main()
 {
+	clock_t start, end;
+	
 	string path = "src/211.jpg";
 	Mat img = imread(path);
 	Mat img2;
@@ -23,12 +25,13 @@ int main()
 		waitKey(0);
 	}
 */
-	
-	rotate_img(img, img2, PI*1/2, -1, 0.5,BILINEAR);
+	start = time(NULL);
+	rotate_img(img, img2, PI*3/4, -1, 0.5,BILINEAR);
+	end = time(NULL);
+	cout << "Time used: " << (end - start) / 1000 << endl;
 
 	imshow("img2", img2);
 	waitKey(0);
-	cout << "initial size: \n" << img.size << endl;
 
 	system("pause");
 	return 0;

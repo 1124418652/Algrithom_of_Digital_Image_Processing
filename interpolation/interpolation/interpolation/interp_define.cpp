@@ -130,6 +130,14 @@ bool resize_img(const Mat &res, Mat &dest, int height, int width, int type)
 bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, float gain, int type)
 {
 	/*
+	variables description:
+	res:       the resource image(Mat)
+	dest:      the target image(Mat)
+	angle:     the angle want to rotate
+	direction: CLOCKWISE 1 | COUNTER_CLOCKWISE -1
+	gain:      zoom factor
+	type:      interpolation type, NEAREST 0 | BILINEAR 1
+
 	rotate formula:
 	dest_x = [res_x * cos(angle) + res_y * sin(angle)] * gain
 	dest_y = [res_y * cos(angle) - res_x * sin(angle)] * gain
@@ -146,6 +154,7 @@ bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, float ga
 	2) Calculate the coordinate pointers before image rotating.
 	3) Convert the coordinate system to image coordinate system.
 	*/
+
 	clock_t start;
 	start = time(NULL);
 
