@@ -28,6 +28,8 @@ bool resize_img(const Mat &res, Mat &dest, int height, int width, int type)
 		{
 			for (int i = 0; i < height; i++)
 			{
+
+
 				for (int j = 0; j < width; j++)
 				{
 					res_x = (int)((float)i / width * res.rows + 0.5);
@@ -44,8 +46,8 @@ bool resize_img(const Mat &res, Mat &dest, int height, int width, int type)
 			{
 				for (int j = 0; j < width; j++)
 				{
-					_x = (double)i / width *res.rows;
-					_y = (double)j / width*res.cols;
+					_x = (double)i / width * res.rows;
+					_y = (double)j / width * res.cols;
 					res_x = (int)_x;
 					res_y = (int)_y;
 					_u = _x - res_x;
@@ -122,9 +124,10 @@ bool resize_img(const Mat &res, Mat &dest, int height, int width, int type)
 		cout << "time used: " << (time(NULL) - start) / 1000 << "s" << endl;
 		return true;
 	}
+	return false;
 }
 
-bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, int gain, int type)
+bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, float gain, int type)
 {
 	/*
 	rotate formula:
@@ -153,46 +156,180 @@ bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, int gain
 		return false;
 	}
 
-	int res_x = 0, res_y = 0;
 	int channel = res.channels();
+	int res_x = 0;       // the horizontal coordinate 
+	int res_y = 0;       // the vertical coordinate
 	int res_height = res.rows;
 	int res_width = res.cols;
 	int dest_height = 0, dest_width = 0;
 	double min_x = 0, max_x = 0, min_y = 0, max_y = 0;
 	double _height = 0, _width = 0;
-
-	if (NEAREST == type)
+	
+	for (int i = 0; i < res_height; i++)
 	{
-		for (int i = 0; i < res_height; i++)
+		for (int j = 0; j < res_width; j++)
 		{
-			for (int j = 0; j < res_width; j++)
-			{
-				_width = (j * cos(angle) - i * sin(angle)) / gain;
-				_height = (j * sin(angle) + i * cos(angle)) / gain;
-				/*cout << _width << " , " << _height << endl;*/
-				if (_width < min_x)
-					min_x = _width;
-				if (_width > max_x)
-					max_x = _width;
-				if (_height < min_y)
-					min_y = _height;
-				if (_height > max_y)
-					max_y = _height;
-			}
-		}
+			_width = gain * j * cos(angle) + gain * i * sin(angle);
+			_height = -gain * j * sin(angle) + gain * i * cos(angle);
+			//cout << _width << " , " << _height << endl;
 
-		dest_height = (int)(max_y - min_y) + 1;          // Inorder to contain all pointers in resource image
-		dest_width = (int)(max_x - min_x) + 1;
-		
-		for (int i = 0; i < dest_height; i++)
-		{
-			for (int j = 0; j < dest_width; j++)
-			{
-				
-			}
+			if (_width < min_x)
+				min_x = _width;
+			if (_width > max_x)
+				max_x = _width;
+			if (_height < min_y)
+				min_y = _height;
+			if (_height > max_y)
+				max_y = _height;
 		}
 	}
-	cout << "size of rotated image:" << endl;
-	cout << dest_height << " x " << dest_width << endl;
-	return true;
+
+	dest_height = (int)((max_y - min_y) + gain + 10);          // Inorder to contain all pointers in resource image
+	dest_width = (int)((max_x - min_x) + gain + 10);
+	/*cout << dest_height << " , " << dest_width << endl;*/
+
+	if (1 == channel)
+	{
+		Mat _tmp(dest_height, dest_width, CV_8U);
+
+		if (NEAREST == type)
+		{
+			for (int i = 0; i < dest_height; i++)
+			{
+				for (int j = 0; j < dest_width; j++)
+				{
+					res_x = (int)(0.5*res_width - (0.5*dest_height - i)*sin(angle) / gain + (-0.5*dest_width + j)*cos(angle) / gain + 0.5);
+					res_y = (int)(0.5*res_height - (0.5*dest_height - i)*cos(angle) / gain - (-0.5*dest_width + j)*sin(angle) / gain + 0.5);
+
+					if (res_y < 0 || res_x < 0 || res_y >= res_height || res_x >= res_width)
+					{
+						_tmp.at<uchar>(i, j) = 0;
+					}
+
+					// cout << res_y <<" , "<< res_x << endl;
+					else
+						_tmp.at<uchar>(i, j) = res.at<uchar>(res_y, res_x);
+				}
+			}
+
+			dest = _tmp.clone();
+			return true;
+		}
+
+		else if (BILINEAR == type)
+		{
+			double _h = 0.0, _w = 0.0;
+			double _u = 0.0;      // the horizontal difference
+			double _v = 0.0;      // the vertical difference
+
+			for (int i = 0; i < dest_height; i++)
+			{
+				for (int j = 0; j < dest_width; j++)
+				{
+					_w = 0.5*res_width - (0.5*dest_height - i)*sin(angle) / gain + (-0.5*dest_width + j)*cos(angle) / gain;
+					_h = 0.5*res_height - (0.5*dest_height - i)*cos(angle) / gain - (-0.5*dest_width + j)*sin(angle) / gain;
+					res_x = (int)_w;
+					res_y = (int)_h;
+					_u = _w - res_x;
+					_v = _h - res_y;
+					/*cout << _u << " , " << _v << endl;*/
+					if (res_y < 0 || res_x < 0 || res_y >= res_height - 1 || res_x >= res_width - 1)
+					{
+						_tmp.at<uchar>(i, j) = 0;
+					}
+					else
+					{
+						_tmp.at<uchar>(i, j) = (1 - _u) * (1 - _v) * (double)res.at<uchar>(res_y, res_x) + \
+							(1 - _u) * _v * (double)res.at<uchar>(res_y, res_x + 1) + \
+							_u * (1 - _v) * (double)res.at<uchar>(res_y + 1, res_x) + \
+							_u * _v * (double)res.at<uchar>(res_y + 1, res_x + 1);
+					}
+				}
+			}
+
+			dest = _tmp.clone();
+			return true;
+		}
+
+		else
+		{
+			cout << "Don't have this type!" << endl;
+			return false;
+		}
+	}
+
+	else if (3 == channel)
+	{
+		Mat _tmp(dest_height, dest_width, CV_8UC3);
+		int color = 0;
+
+		if (NEAREST == type)
+		{
+			for (int i = 0; i < dest_height; i++)
+			{
+				for (int j = 0; j < dest_width; j++)
+				{
+					res_x = (int)(0.5*res_width - (0.5*dest_height - i)*sin(angle) / gain + (-0.5*dest_width + j)*cos(angle) / gain + 0.5);
+					res_y = (int)(0.5*res_height - (0.5*dest_height - i)*cos(angle) / gain - (-0.5*dest_width + j)*sin(angle) / gain + 0.5);
+
+					if (res_y < 0 || res_x < 0 || res_y >= res_height || res_x >= res_width)
+					{
+						_tmp.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+					}
+
+					// cout << res_y <<" , "<< res_x << endl;
+					else
+						_tmp.at<Vec3b>(i, j) = res.at<Vec3b>(res_y, res_x);
+				}
+			}
+
+			dest = _tmp.clone();
+			return true;
+		}
+
+		else if (BILINEAR == type)
+		{
+			double _h = 0.0, _w = 0.0;
+			double _u = 0.0;      // the horizontal difference
+			double _v = 0.0;      // the vertical difference
+			int color = 0;
+
+			for (int i = 0; i < dest_height; i++)
+			{
+				for (int j = 0; j < dest_width; j++)
+				{
+					_w = 0.5*res_width - (0.5*dest_height - i)*sin(angle) / gain + (-0.5*dest_width + j)*cos(angle) / gain;
+					_h = 0.5*res_height - (0.5*dest_height - i)*cos(angle) / gain - (-0.5*dest_width + j)*sin(angle) / gain;
+					res_x = (int)_w;
+					res_y = (int)_h;
+					_u = _w - res_x;
+					_v = _h - res_y;
+
+					for (color = 0; color < 3; color++)
+					{
+						if (res_x < 0 || res_x >= res_width - 1 || res_y < 0 || res_y >= res_height - 1)
+						{
+							_tmp.at<Vec3b>(i, j)[color] = 0;
+						}
+						else
+						{
+							_tmp.at<Vec3b>(i, j)[color] = (1 - _u) * (1 - _v) * res.at<Vec3b>(res_y, res_x)[color] + \
+								(1 - _u) * _v * res.at<Vec3b>(res_y, res_x + 1)[color] + \
+								_u * (1 - _v) * res.at<Vec3b>(res_y + 1, res_x)[color] + \
+								_u * _v * res.at<Vec3b>(res_y + 1, res_x + 1)[color];
+						}
+					}
+				}
+			}
+			dest = _tmp.clone();
+			return true;
+		}
+
+		else
+		{
+			cout << "Don't have this type!" << endl;
+			return false;
+		}
+	}
+	return false;
 }

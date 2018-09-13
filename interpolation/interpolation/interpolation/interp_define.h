@@ -20,4 +20,4 @@ using namespace std;
 using namespace cv;
 
 bool resize_img(const Mat &res, Mat &dest, int height, int width, int type = NEAREST);
-bool rotate_img(const Mat &res, Mat &dest, double angle, int direction = CLOCKWISE, int gain = 1, int type = NEAREST);
+bool rotate_img(const Mat &res, Mat &dest, double angle, int direction = CLOCKWISE, float gain = 1, int type = NEAREST);
