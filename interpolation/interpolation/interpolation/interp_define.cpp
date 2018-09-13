@@ -156,6 +156,9 @@ bool rotate_img(const Mat &res, Mat &dest, double angle, int direction, float ga
 		return false;
 	}
 
+	if (COUNTER_CLOCKWISE == direction)
+		angle = 2 * PI - angle;
+
 	int channel = res.channels();
 	int res_x = 0;       // the horizontal coordinate 
 	int res_y = 0;       // the vertical coordinate

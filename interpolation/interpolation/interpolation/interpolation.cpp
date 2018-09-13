@@ -24,7 +24,7 @@ int main()
 	}
 */
 	
-	rotate_img(img, img2, PI*1/6, 1, 0.5,BILINEAR);
+	rotate_img(img, img2, PI*1/2, -1, 0.5,BILINEAR);
 
 	imshow("img2", img2);
 	waitKey(0);
