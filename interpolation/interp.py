@@ -66,25 +66,47 @@ def img_resize(img, height, width, type):
         return dest
 
     elif 3 == len(img.shape):
-        dest = np.zeros((height, width, 3))
+        dest = np.zeros((height, width, 4), int)
 
         for dest_y in range(height):
             for dest_x in range(width):
 
                 if "NEAREST" == type.upper():
+                	res_x = int(res_width * dest_x / width + 0.5)
+                	res_y = int(res_height * dest_y / height + 0.5)
+                	if res_x >= res_width:
+                		res_x -= 1 
+                	if res_y >= res_height:
+                		res_y -= 1 
 
+                	for color in range(3):
+                		dest[dest_y][dest_x][color] = img[res_y][res_x][color]
 
-                elif "BILINER" == type.upper():
-                    pass
+                elif "BILINEAR" == type.upper():
+                    _u, _v = [0.0, 0.0]
+                    _x = float(res_width * dest_x / width)
+                    _y = float(res_height * dest_y / height)
+
+                    if _x >= res_width - 1:
+                        _x -= 1
+                    if _y >= res_height - 1:
+                        _y -= 1
+
+                    res_x = int(_x)
+                    res_y = int(_y)
+                    _u, _v = _x - res_x, _y - res_y
 
                 else:
                     print("Don't have this type")
                     return False
 
+        return dest
+
 def main():
-    path = "fengjing.jpg"
-    res = img_open(path, "gray")
-    dest = img_resize(res, 1000, 1500, "BILINEAR")
+    path = "test.png"
+    res = img_open(path)
+
+    dest = img_resize(res, 1000, 1500, "nearest")
     print("res.shape: %s\tdest.shape: %s\t" %(res.shape, dest.shape))
     dest = Image.fromarray(dest)
 
