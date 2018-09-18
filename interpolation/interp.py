@@ -103,12 +103,12 @@ def img_resize(img, height, width, type):
         return dest
 
 def main():
-    path = "test.png"
+    path = "test2.jpg"
     res = img_open(path)
 
     dest = img_resize(res, 1000, 1500, "nearest")
     print("res.shape: %s\tdest.shape: %s\t" %(res.shape, dest.shape))
-    dest = Image.fromarray(dest)
+    dest = Image.fromarray(dest[:,:,1])
 
     fig = plt.figure()
     ax1 = fig.add_subplot(221)
