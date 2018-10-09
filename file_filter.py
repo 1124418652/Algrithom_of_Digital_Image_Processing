@@ -37,10 +37,10 @@ def findFile(path):
 	tmp_path = path
 	file_list = []
 
-	if os.path.isfile(tmp_path) and not isCodeFile(tmp_path):
+	if os.path.isfile(tmp_path) and not isCodeFile(tmp_path):   # 非代码文件的文件路径
 		file_list.append(tmp_path)
 
-	elif os.path.isdir(tmp_path):
+	elif os.path.isdir(tmp_path):           # 该路劲表示的是文件夹
 		for name in os.listdir(tmp_path):
 			tmp_path = os.path.join(path, name)
 			file_list.extend(findFile(tmp_path))
@@ -56,7 +56,7 @@ def modify_path(cur_path, file_list):
 	res_list = []
 
 	for file in file_list:
-		res_list.append("/".join(file[len(cur_path) + 1:].split("\\")))
+		res_list.append("/".join(file[len(cur_path) + 1:].split("\\")))   # windows 系统下路径分割符切换
 
 	return res_list
 
