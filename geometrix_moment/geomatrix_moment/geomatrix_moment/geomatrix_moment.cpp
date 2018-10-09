@@ -72,8 +72,8 @@ bool HuMoment(IplImage *img)
 		cout << "m02:" << m02 << endl;
 		cout << "m22:" << m22 << endl;
 		cout << "endl";
-		cout << "u20:" << endl;
-		cout << "u02" << endl;
+		cout << "u20:" << u20<<endl;
+		cout << "u02:" << u02<< endl;
 		return true;
 	}
 
@@ -89,6 +89,7 @@ int main()
 	string path = "src/211.jpg";
 	IplImage *img = cvLoadImage(path.c_str(), 0);
 	HuMoment(img);
+	cvReleaseImage(&img);
 	system("pause");
     return 0;
 }
