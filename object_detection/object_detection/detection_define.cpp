@@ -180,6 +180,44 @@ std::vector<cv::Vec4i> Line_segment_detector::detectLines(const cv::Mat &src_img
 		if (1 != src_img.channels())
 			std::cerr << "error" << std::endl;
 		Line_detector::set_canny_image(src_img);
+		break;
+	case BINARY_IMAGE:
+		if (1 != src_img.channels())
+			std::cerr << "error" << std::endl;
+		Line_detector::set_binary_image(src_img);
+		Line_detector::set_canny_image(src_img);
+		break;
+	default:
+		std::cerr << "don't have this image type!" << std::endl;
+		break;
 	}
+	cv::HoughLinesP(Line_detector::get_canny_image(), \
+					line_segment_pairs, \
+					Line_detector::getDeltaRho(), \
+					Line_detector::getDeltaTheta(), \
+					Line_detector::getMinVote(), minLength, maxGap);
 	return line_segment_pairs;
+}
+
+void Line_segment_detector::drawDetectedLines(const cv::Mat &src_img, \
+	cv::Mat &dst_img, \
+	cv::Scalar color, \
+	int thickness)
+{
+	cv::Mat tmp_canny_image = Line_detector::get_canny_image();
+	if (tmp_canny_image.empty() || \
+		tmp_canny_image.rows != src_img.rows || \
+		tmp_canny_image.cols != src_img.cols)
+		std::cerr << "error" << std::endl;
+	cv::Mat res_image = src_img.clone();
+	size_t line_numbers = line_segment_pairs.size();
+	for (int i = 0; i < line_numbers; ++i) {
+		cv::Point pt1, pt2;
+		pt1.x = line_segment_pairs[i][0];
+		pt1.y = line_segment_pairs[i][1];
+		pt2.x = line_segment_pairs[i][2];
+		pt2.y = line_segment_pairs[i][3];
+		cv::line(res_image, pt1, pt2, color, thickness);
+	}
+	dst_img = res_image.clone();
 }

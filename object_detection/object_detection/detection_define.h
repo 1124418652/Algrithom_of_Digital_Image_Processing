@@ -153,4 +153,12 @@ private:
 	std::vector<cv::Vec4i>line_segment_pairs;
 };
 
+
+//================================================================
+//	class name: Line_segment_detector
+//	description: find the line segments in the image
+//================================================================
+
+
+
 #endif //__DETECTION_DEFINE
