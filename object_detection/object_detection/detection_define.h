@@ -47,15 +47,14 @@ public:
 	void setDeltaTheta(double dTheta) {
 		deltaTheta = dTheta;
 	}
-	double getDeltaTheta(){
+	double getDeltaTheta() {
 		return this->deltaTheta;
 	}
 
 	void setThreshold1(int th1) {
 		threshold1 = th1;
 	}
-	int getThreshold1()
-	{
+	int getThreshold1(){
 		return threshold1;
 	}
 
@@ -126,8 +125,10 @@ public:
 
 	void useDefaultParameters(){
 		Line_detector::useDefaultParameters();
-		minLength = 10;
-		maxGap = 50;
+		if (0 == minLength)
+			minLength = 10;
+		if (0 == maxGap)
+			maxGap = 50;
 	}
 	void setMinLength(double minLength){
 		this->minLength = minLength;
@@ -159,6 +160,34 @@ private:
 //	description: find the line segments in the image
 //================================================================
 
+class Circle_detector
+{
+public:
+	Circle_detector() = default;
+	Circle_detector(double dp, double minDist, double param1, double param2, int minRadius, int maxRadius) :
+		dp(dp), minDist(minDist), param1(param1), param2(param2), minRadius(minRadius), maxRadius(maxRadius) {}
+	void useDefaultParameters() {
+		dp = 1.5;
+		minDist = 20;
+		param1 = 100;
+		param2 = 200;
+		minRadius = 30;
+		maxRadius = 60;
+	}
 
+	std::vector<cv::Vec3f> detectCircles(const cv::Mat &src_img);
+	void drawDetectedCircles(const cv::Mat &src_img, cv::Mat &dst_img, \
+							 cv::Scalar color = cv::Scalar(0, 255, 0), int thickness = 1);
+private:
+	cv::Mat src_image;
+	std::vector<cv::Vec3f> circles;
+	int method = cv::HOUGH_GRADIENT;
+	double dp;                   // 累加器图像的分辨率于输入图像之比的倒数，如果dp=2，则累加器只有输入图像的一半大
+	double minDist;              // 霍夫变换检测到的圆的圆心之间的最小距离
+	double param1 = 100;         // method 设置的检测方法的对应的参数，此处表示传递给 canny 的高阈值，低阈值为其一半
+	double param2 = 100;         // 表示圆心检测阶段累加器的阈值，该值越小就能检测到越多的圆
+	int minRadius = 0;     // the min radius of circle
+	int maxRadius = 0;
+};
 
 #endif //__DETECTION_DEFINE

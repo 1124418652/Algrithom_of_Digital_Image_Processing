@@ -221,3 +221,43 @@ void Line_segment_detector::drawDetectedLines(const cv::Mat &src_img, \
 	}
 	dst_img = res_image.clone();
 }
+
+
+//================================================================
+//	class name: Line_segment_detector
+//	description: find the line segments in the image
+//================================================================
+
+std::vector<cv::Vec3f> Circle_detector::detectCircles(const cv::Mat &src_img)
+{
+	if (src_img.empty())
+		std::cerr << "the image is empty!" << std::endl;
+	if (1 == src_img.channels())
+		src_image = src_img.clone();
+	else if (3 == src_img.channels())
+		cv::cvtColor(src_img, src_image, cv::COLOR_BGR2GRAY);
+	else
+		std::cerr << "the image type should be rgb or gray" << std::endl;
+	if (src_image.empty())
+		std::cerr << "the image is empty" << std::endl;
+
+	cv::HoughCircles(src_image, circles, method, dp, minDist, param1, param2, minRadius, maxRadius);
+	return circles;
+}
+
+void Circle_detector::drawDetectedCircles(const cv::Mat &src_img, cv::Mat &dst_img, \
+	cv::Scalar color, int thickness)
+{
+	assert(!src_img.empty());
+	assert(circles.size());
+	assert(src_img.rows == src_image.rows && src_img.cols == src_img.cols);
+	cv::Point center;
+	int radiu;
+	for (size_t i = 0; i < circles.size(); ++i) {
+		center.x = circles[i][0];
+		center.y = circles[i][1];
+		radiu = circles[i][2];
+		cv::circle(src_img, center, radiu, color, thickness);
+	}
+	dst_img = src_img.clone();
+}
