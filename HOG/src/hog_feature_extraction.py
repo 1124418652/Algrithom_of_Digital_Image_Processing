@@ -78,6 +78,8 @@ class Hog_discriptor(object):
 				bin_before, bin_after = int(angle // self.angle_unit), int(angle // self.angle_unit) + 1 
 				if bin_after > self.bin_size - 1:        # 当角度>160°时，需要分配到160和0两个bin中
 					bin_after -= self.bin_size
+				if bin_before > self.bin_size - 1:
+					bin_before -= self.bin_size
 				weight = angle % self.angle_unit / self.angle_unit     # bin_after 占有该magnitude的比例
 				orientation_bin[bin_before] += (1 - weight) * magnitude
 				orientation_bin[bin_after] += weight * magnitude
@@ -167,7 +169,7 @@ class Hog_discriptor(object):
 
 
 if __name__ == '__main__':
-	image_path = "../img/circle.png"
+	image_path = "../img/timg1.jpg"
 	src_image = cv2.imread(image_path, 0)
 	# src_image = cv2.resize(src_image, (64, 128))
 	print(src_image.shape)

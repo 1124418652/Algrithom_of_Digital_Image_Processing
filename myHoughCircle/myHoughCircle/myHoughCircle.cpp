@@ -30,12 +30,12 @@ int Partition(std::vector<std::vector<int>> &centers, int index, int begin, int 
 
 int main()
 {
-	std::string img_path = "img/timg3.jpg";
+	std::string img_path = "img/timg2.jpg";
 	cv::Mat src_img = cv::imread(img_path, 0);
 	if (src_img.empty())
 		exit(1);
 	std::vector<cv::Vec3f> circles;
-	myHoughCircle(src_img, circles, 1, 2, 8, 20, 100, 10);
+	myHoughCircle(src_img, circles, 1, 2, 8, 60, 100, 70);
 	cv::imshow("src_img", src_img);
 	cv::waitKey(0);
     return 0;
