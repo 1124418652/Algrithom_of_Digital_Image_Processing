@@ -8,29 +8,31 @@
 #include <iostream>
 #include <iomanip>
 #include <opencv2/opencv.hpp>
-
-#define PI 3.14
+#include "LOG.h"
 
 using namespace std;
 using namespace cv;
 
 /**
- * @brief 生成一个 Laplace of Guassian 卷积核
- * 
- * @param kernal 用来保存生成的卷积核数据的一个二维数组
- * @param halfWinSize 卷积核窗口尺寸的一半
- * @param sigma 高斯卷积核的尺度，即高斯公式中的标准差
+ * @brief 用于保存斑点的结构
  */
-void getLOGKernal(float** kernal, int halfWinSize, float sigma);
+struct Blob {
+	int x = 0;
+	int y = 0;
+	float radius = 0.0;
+	float intensity = 0.0;
+};
 
 int main(int argc, char** argv)
 {
 	Mat img;
+
 	float** kernal = new float* [7];
 	for (int i = 0; i < 7; ++i)
 	{
 		kernal[i] = new float[7];
 	}
+
 	getLOGKernal(kernal, 3, 1);
 	for (int i = 0; i < 7; ++i) {
 		for (int j = 0; j < 7; ++j) {
@@ -40,19 +42,6 @@ int main(int argc, char** argv)
 	}
 
     return 0;
+	system("pause");
 }
 
-void getLOGKernal(float** kernal, int halfWinSize, float sigma)
-{
-	int winSize = halfWinSize * 2 + 1;
-	float powSigma = pow(sigma, 2);
-	float index = 0;         // 高斯公式中 e 的指数
-	float proportion = 0;    // LOG 公式中 e 项之前的比例系数
-	for (int i = -halfWinSize; i <= halfWinSize; ++i) {
-		for (int j = -halfWinSize; j <= halfWinSize; ++j) {
-			index = -(i * i + j * j) / (2 * powSigma); 
-			proportion = (i * i + j * j - 2 * powSigma) / (2 * PI * powSigma * powSigma);
-			kernal[i + halfWinSize][j + halfWinSize] = proportion * exp(index);
-		}
-	}
-}
